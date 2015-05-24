@@ -1,0 +1,5 @@
+<ul>
+{% for emp in employee_list %}
+<li><a href="{{ emp.get_absolute_url }}">{{ emp.firstname }} {{ emp.lastname }}</a> ({{ emp.position }} at {{ emp.company }})</li>
+{% endfor %}
+</ul>

@@ -1,13 +1,22 @@
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.core.urlresolvers import reverse_lazy
 
 from .models import Company, Employee
 
+
+class Index(TemplateView):
+    template_name = 'index.html'
+
+
 #TODO: login_required
 class CompanyList(ListView):
     model = Company
+
+
+class EmployeeList(ListView):
+    model = Employee
 
 
 class CompanyDetail(DetailView):
