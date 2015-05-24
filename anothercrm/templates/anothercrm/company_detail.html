@@ -1,0 +1,10 @@
+<p>{{ company.name }}</p>
+<p>{{ company.mission }}</p>
+
+<ul>
+    {% for emp in company.employees_by_position %}
+        {% ifchanged emp.position %}{{ emp.position }}{% endifchanged %}
+        <li><a href="{{ emp.get_absolute_url }}">{{ emp.firstname }} {{ emp.lastname }}</a></li>
+    {% endfor %}
+</ul>
+

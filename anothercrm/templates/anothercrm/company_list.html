@@ -1,0 +1,7 @@
+<ul>
+{% for comp in company_list %}
+<li><a href="{{ comp.get_absolute_url }}">{{ comp.name }}</a></li>
+{% empty %}
+    <li>No companies available.</li>
+{% endfor %}
+</ul>
