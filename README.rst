@@ -18,6 +18,18 @@ Quick start
 
     url(r'^anothercrm/', include('anothercrm.urls', namespace='anothercrm')),
 
+3. Enable login and logout, for example via ``auth`` module::
+
+   from django.contrib.auth import views as auth_views
+
+   urlpatterns = (
+   # ...
+   url(r'^accounts/login/$', auth_views.login),
+   url(r'^accounts/logout/$', auth_views.logout),
+   )
+
+
+
 3. Run `python manage.py migrate` to create the anothercrm models.
 
 4. Start the development server and visit http://127.0.0.1:8000/admin/
