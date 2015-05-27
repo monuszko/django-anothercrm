@@ -1,0 +1,17 @@
+<p>{{ person.firstname }} {{ person.lastname }}</p>
+
+<ul>
+{% for emprel in person.employee_relationships %}
+<li>{{ emprel.relatype.name }} at <a href="{{ emprel.company.get_absolute_url }}">{{ emprel.company.name }}</a></li>
+{% empty %}
+    <li>No employment data.</li>
+{% endfor %}
+</ul>
+
+<ul>
+{% for clirel in person.client_relationships %}
+<li>{{ clirel.relatype.name }} for <a href="{{ clirel.company.get_absolute_url }}">{{ clirel.company.name }}</a></li>
+{% empty %}
+    <li>No employment data.</li>
+{% endfor %}
+</ul>

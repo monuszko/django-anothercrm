@@ -20,13 +20,13 @@ Quick start
 
 3. Enable login and logout, for example via ``auth`` module::
 
-   from django.contrib.auth import views as auth_views
+    from django.contrib.auth import views as auth_views
 
-   urlpatterns = (
-   # ...
-   url(r'^accounts/login/$', auth_views.login),
-   url(r'^accounts/logout/$', auth_views.logout),
-   )
+    urlpatterns = (
+    # ...
+    url(r'^accounts/login/$', auth_views.login),
+    url(r'^accounts/logout/$', auth_views.logout),
+    )
 
 
 

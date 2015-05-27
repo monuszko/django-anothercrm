@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse_lazy
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
 
-from .models import Company, Employee
+from .models import Company, Person
 
 #TODO: DRY !!!
 class Index(TemplateView):
@@ -25,12 +25,12 @@ class CompanyList(ListView):
         return super(CompanyList, self).dispatch(*args, **kwargs)
 
 
-class EmployeeList(ListView):
-    model = Employee
+class PersonList(ListView):
+    model = Person
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(EmployeeList, self).dispatch(*args, **kwargs)
+        return super(PersonList, self).dispatch(*args, **kwargs)
 
 
 class CompanyDetail(DetailView):
@@ -41,12 +41,12 @@ class CompanyDetail(DetailView):
         return super(CompanyDetail, self).dispatch(*args, **kwargs)
 
 
-class EmployeeDetail(DetailView):
-    model = Employee 
+class PersonDetail(DetailView):
+    model = Person 
 
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
-        return super(EmployeeDetail, self).dispatch(*args, **kwargs)
+        return super(PersonDetail, self).dispatch(*args, **kwargs)
 
 
 class CreateCompany(CreateView):
@@ -60,15 +60,15 @@ class CreateCompany(CreateView):
         return super(CreateCompany, self).dispatch(*args, **kwargs)
 
 
-class CreateEmployee(CreateView):
+class CreatePerson(CreateView):
     template_name = 'anothercrm/create_form.html'
-    model = Employee 
+    model = Person 
     fields = ('firstname', 'lastname', 'sex', 'company', 'position')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('anothercrm.add_employee'))
     def dispatch(self, *args, **kwargs):
-        return super(CreateEmployee, self).dispatch(*args, **kwargs)
+        return super(CreatePerson, self).dispatch(*args, **kwargs)
 
 
 class DeleteCompany(DeleteView):
@@ -82,15 +82,15 @@ class DeleteCompany(DeleteView):
         return super(DeleteCompany, self).dispatch(*args, **kwargs)
 
 
-class DeleteEmployee(DeleteView):
+class DeletePerson(DeleteView):
     template_name = 'anothercrm/delete_form.html'
-    model = Employee 
+    model = Person 
     success_url = reverse_lazy('anothercrm:employee_list')
 
     @method_decorator(login_required)
     @method_decorator(permission_required('anothercrm.delete_employee'))
     def dispatch(self, *args, **kwargs):
-        return super(DeleteEmployee, self).dispatch(*args, **kwargs)
+        return super(DeletePerson, self).dispatch(*args, **kwargs)
 
 
 class UpdateCompany(UpdateView):
@@ -104,12 +104,12 @@ class UpdateCompany(UpdateView):
         return super(UpdateCompany, self).dispatch(*args, **kwargs)
 
 
-class UpdateEmployee(UpdateView):
-    model = Employee 
+class UpdatePerson(UpdateView):
+    model = Person 
     fields = ('firstname', 'lastname', 'sex', 'company', 'position')
     template_name = 'anothercrm/update_form.html'
 
     @method_decorator(login_required)
     @method_decorator(permission_required('anothercrm.change_employee'))
     def dispatch(self, *args, **kwargs):
-        return super(UpdateEmployee, self).dispatch(*args, **kwargs)
+        return super(UpdatePerson, self).dispatch(*args, **kwargs)

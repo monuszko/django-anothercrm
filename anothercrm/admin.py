@@ -1,16 +1,23 @@
 from django.contrib import admin
 
-from .models import Company, Employee
+from .models import Company, Relationship, RelationshipType, Person
 
 
-class EmployeeInline(admin.TabularInline):
-    model = Employee
+class RelationshipInline(admin.TabularInline):
+    model = Relationship 
     extra = 2
 
 
+class RelationshipAdmin(admin.ModelAdmin):
+    model = Relationship
+    list_display = ('person', 'relatype', 'company')
+
+
 class CompanyAdmin(admin.ModelAdmin):
-    inlines = (EmployeeInline,)
+    inlines = (RelationshipInline,)
 
 
 admin.site.register(Company, CompanyAdmin)
-admin.site.register(Employee)
+admin.site.register(Relationship, RelationshipAdmin)
+admin.site.register(Person)
+admin.site.register(RelationshipType)

@@ -2,9 +2,19 @@
 <p>{{ company.mission }}</p>
 
 <ul>
-    {% for emp in company.employees_by_position %}
-        {% ifchanged emp.position %}{{ emp.position }}{% endifchanged %}
-        <li><a href="{{ emp.get_absolute_url }}">{{ emp.firstname }} {{ emp.lastname }}</a></li>
+    {% for emprel in company.employees_by_position %}
+        {% ifchanged emprel.relatype %}{{ emprel.relatype }}{% endifchanged %}
+        <li><a href="{{ emprel.person.get_absolute_url }}">{{ emprel.person }}</a></li>
+        {% empty %}
+        <li>No known employees.</li>
     {% endfor %}
 </ul>
 
+<ul>
+    {% for clirel in company.clients_by_type %}
+        {% ifchanged clirel.relatype %}{{ clirel.relatype }}{% endifchanged %}
+        <li><a href="{{ clirel.person.get_absolute_url }}">{{ clirel.person }}</a></li>
+        {% empty %}
+        <li>No known clients.</li>
+    {% endfor %}
+</ul>

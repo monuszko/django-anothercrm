@@ -1,0 +1,5 @@
+<ul>
+{% for pers in person_list %}
+<li><a href="{{ pers.get_absolute_url }}">{{ pers.firstname }} {{ pers.lastname }}</a> Employed {{ pers.employee_count }}x, Client {{ pers.client_count }}x; Companies: {{ pers.company_names }}</li>
+{% endfor %}
+</ul>
