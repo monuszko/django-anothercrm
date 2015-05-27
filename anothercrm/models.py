@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.translation import ugettext_lazy as _
 
 
 class Person(models.Model):
@@ -6,10 +7,30 @@ class Person(models.Model):
             ('M', 'Male'),
             ('F', 'Female'),
             )
-    #TODO: validators for name
+    #TODO: validators for name, mobile...
     firstname = models.CharField(max_length=30)
     lastname = models.CharField(max_length=30)
     sex = models.CharField(max_length=1, choices=SEX_CHOICES)
+
+    email = models.EmailField(
+                   max_length=200, verbose_name=_('Email address'), blank=True)
+    mobile = models.CharField(
+              max_length=20, verbose_name=_('Mobile Phone Number'), blank=True)
+
+    address = models.CharField(max_length=100, verbose_name=_('Address'),
+                                help_text=_('24 Badger Rd., etc.'), blank=True)
+    zipcode = models.CharField(max_length=10, verbose_name=_('Postal code'),
+                    help_text=_("For example, '80-209' in Poland"), blank=True)
+    city = models.CharField(max_length=100, verbose_name=_('City'), blank=True)
+    state = models.CharField(
+                           max_length=100, verbose_name=_('State'), blank=True)
+    country = models.CharField(
+                           max_length=2, verbose_name=_('Country'), blank=True)
+
+    creation_date = models.DateTimeField(
+                            verbose_name=_('Creation Date'), auto_now_add=True)
+    modification_date = models.DateTimeField(
+                            verbose_name=_('Modification Date'), auto_now=True)
 
     def get_absolute_url(self):
         from django.core.urlresolvers import reverse
@@ -92,7 +113,7 @@ class Company(models.Model):
                              relatype__category='C').order_by('relatype__name')
 
     class Meta:
-        verbose_name_plural = 'companies'
+        verbose_name_plural = _('companies')
 
 
 class RelationshipType(models.Model):
@@ -109,7 +130,7 @@ class RelationshipType(models.Model):
 
 
 class Relationship(models.Model):
-    relatype = models.ForeignKey(RelationshipType, verbose_name='relationship type')
+    relatype = models.ForeignKey(RelationshipType, verbose_name=_('relationship type'))
     company = models.ForeignKey(Company)
     person = models.ForeignKey(Person)
 

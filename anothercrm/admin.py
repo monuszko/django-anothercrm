@@ -17,7 +17,12 @@ class CompanyAdmin(admin.ModelAdmin):
     inlines = (RelationshipInline,)
 
 
+class PersonAdmin(admin.ModelAdmin):
+    readonly_fields = ('creation_date', 'modification_date')
+
+
+
 admin.site.register(Company, CompanyAdmin)
 admin.site.register(Relationship, RelationshipAdmin)
-admin.site.register(Person)
+admin.site.register(Person, PersonAdmin)
 admin.site.register(RelationshipType)
