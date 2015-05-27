@@ -18,3 +18,4 @@
         <li>No known clients.</li>
     {% endfor %}
 </ul>
+<p><a href="{% url 'anothercrm:create_person' %}?origin={{ request.path }}">Create Person</a></p>

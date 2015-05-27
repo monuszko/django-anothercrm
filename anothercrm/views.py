@@ -63,12 +63,26 @@ class CreateCompany(CreateView):
 class CreatePerson(CreateView):
     template_name = 'anothercrm/create_form.html'
     model = Person 
-    fields = ('firstname', 'lastname', 'sex', 'company', 'position')
+    fields = (
+              'firstname',
+              'lastname',
+              'sex',
+              'email',
+              'mobile',
+              'address',
+              'zipcode',
+              'city',
+              'state',
+              'country'
+             )
 
     @method_decorator(login_required)
     @method_decorator(permission_required('anothercrm.add_employee'))
     def dispatch(self, *args, **kwargs):
         return super(CreatePerson, self).dispatch(*args, **kwargs)
+
+    def get_success_url(self):
+        return self.request.GET.get('origin') or self.object.get_absolute_url()
 
 
 class DeleteCompany(DeleteView):
