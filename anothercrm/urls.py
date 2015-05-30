@@ -14,7 +14,7 @@ urlpatterns = (
         views.PersonList.as_view(), name='person_list'),
 
         url(r'^company/(?P<name>[a-zA-Z0-9-]+)-(?P<pk>\d+)$',
-        views.CompanyDetail.as_view(), name='company'),
+        views.company_detail, name='company'),
 
         url(r'^person/(?P<firstname>\w+)-(?P<lastname>[a-zA-Z-]+)-(?P<pk>\d+)$',
         views.PersonDetail.as_view(), name='person'),

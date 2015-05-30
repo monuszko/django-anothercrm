@@ -1,12 +1,15 @@
 
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.core.urlresolvers import reverse_lazy
+from django.core.urlresolvers import reverse_lazy, reverse
+from django.http import HttpResponseRedirect
 
 from django.contrib.auth.decorators import login_required, permission_required
 from django.utils.decorators import method_decorator
+from django.shortcuts import render, get_object_or_404
 
 from .models import Company, Person
+from .forms import AddEmployeeForm
 
 #TODO: DRY !!!
 class Index(TemplateView):
@@ -31,14 +34,6 @@ class PersonList(ListView):
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):
         return super(PersonList, self).dispatch(*args, **kwargs)
-
-
-class CompanyDetail(DetailView):
-    model = Company
-
-    @method_decorator(login_required)
-    def dispatch(self, *args, **kwargs):
-        return super(CompanyDetail, self).dispatch(*args, **kwargs)
 
 
 class PersonDetail(DetailView):
@@ -127,3 +122,23 @@ class UpdatePerson(UpdateView):
     @method_decorator(permission_required('anothercrm.change_employee'))
     def dispatch(self, *args, **kwargs):
         return super(UpdatePerson, self).dispatch(*args, **kwargs)
+
+
+@login_required
+@permission_required('anothercrm.change_employee')
+def company_detail(request, name, pk):
+    company = get_object_or_404(Company, pk=pk)
+    if request.method == 'POST':
+        form = AddEmployeeForm(request.POST)
+        if form.is_valid():
+            new_employee = form.save(commit=False)
+            new_employee.company = company
+            new_employee.save()
+            return HttpResponseRedirect(request.path)
+    else:
+        form = AddEmployeeForm()
+
+    return render(request, 'anothercrm/company_detail.html', {'form': form,
+                                                              'company': company,
+                                                             })
+
