@@ -8,17 +8,40 @@ class RelationshipInline(admin.TabularInline):
     extra = 2
 
 
+class CustomerInline(admin.TabularInline):
+    model = Relationship
+    extra = 2
+    verbose_name = 'customer'
+    verbose_name_plural = 'customers'
+
+    def get_queryset(self, request):
+        qs = super(CustomerInline, self).get_queryset(request)
+        return qs.filter(relatype__category='C')
+
+
+class EmployeeInline(admin.TabularInline):
+    model = Relationship
+    extra = 2
+    verbose_name = 'employee'
+    verbose_name_plural = 'employees'
+
+    def get_queryset(self, request):
+        qs = super(EmployeeInline, self).get_queryset(request)
+        return qs.filter(relatype__category='E')
+
+
 class RelationshipAdmin(admin.ModelAdmin):
     model = Relationship
     list_display = ('person', 'relatype', 'company')
 
 
 class CompanyAdmin(admin.ModelAdmin):
-    inlines = (RelationshipInline,)
+    inlines = (EmployeeInline, CustomerInline,)
 
 
 class PersonAdmin(admin.ModelAdmin):
     readonly_fields = ('creation_date', 'modification_date')
+    inlines = (RelationshipInline,)
 
 
 
