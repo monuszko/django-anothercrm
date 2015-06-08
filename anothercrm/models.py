@@ -83,9 +83,18 @@ class Person(models.Model):
         return self.relationship_set.filter(relatype__category='C')
 
 
+class Trade(models.Model):
+    name = models.CharField(max_length=100,
+                                   help_text="the industry the company is in.")
+
+    def __unicode__(self):
+        return self.name
+
+
 class Company(models.Model):
     name = models.CharField(max_length=100)
     mission = models.TextField(blank=True, default="To make money.")
+    trades = models.ManyToManyField(Trade, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -97,6 +106,11 @@ class Company(models.Model):
         slug = slugify(self.name)
         return reverse(
                 'anothercrm:company', kwargs={'name': slug, 'pk': self.id})
+
+    def get_trades(self):
+        return ', '.join(tr.name for tr in self.trades.all())
+    get_trades.short_description='Trade(s)'
+    get_trades.admin_order_field='trades'
 
     def employees_by_position(self):
         '''
@@ -122,7 +136,9 @@ class RelationshipType(models.Model):
             ('C', 'Client'),
             )
     category = models.CharField(max_length=1, choices=CATEGORY_CHOICES)
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50,
+            help_text=("For employees, this is position. For customers, it can"
+                       " be 'regular customer', etc."))
     notes = models.TextField(blank=True)
 
     def __unicode__(self):
@@ -130,7 +146,8 @@ class RelationshipType(models.Model):
 
 
 class Relationship(models.Model):
-    relatype = models.ForeignKey(RelationshipType, verbose_name=_('relationship type'))
+    relatype = models.ForeignKey(RelationshipType,
+            verbose_name=_('relationship type'))
     company = models.ForeignKey(Company)
     person = models.ForeignKey(Person)
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Company, Relationship, RelationshipType, Person
+from .models import Company, Relationship, RelationshipType, Person, Trade
 
 
 class RelationshipInline(admin.TabularInline):
@@ -37,6 +37,8 @@ class RelationshipAdmin(admin.ModelAdmin):
 
 class CompanyAdmin(admin.ModelAdmin):
     inlines = (EmployeeInline, CustomerInline,)
+    list_display = ('name', 'get_trades')
+    #TODO: Find a way to remove duplicates when clicking on trades
 
 
 class PersonAdmin(admin.ModelAdmin):
@@ -49,3 +51,4 @@ admin.site.register(Company, CompanyAdmin)
 admin.site.register(Relationship, RelationshipAdmin)
 admin.site.register(Person, PersonAdmin)
 admin.site.register(RelationshipType)
+admin.site.register(Trade)
