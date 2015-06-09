@@ -18,13 +18,36 @@ import factory
 from itertools import groupby
 from operator import itemgetter
 
-from anothercrm.models import Company, Person, Relationship, RelationshipType
+# PEP 3208
+from anothercrm.models import (Company,
+        Person, Relationship, RelationshipType, Trade)
+
+
+class TradeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Trade
+        django_get_or_create = ('name',)
+
+
+TradeFactory(name='combat supplier')
+TradeFactory(name='exotic goods')
+TradeFactory(name='bulk goods')
+TradeFactory(name='slave trader')
 
 
 class CompanyFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = 'anothercrm.Company'
+        model = Company
         django_get_or_create = ('name',)
+
+    @factory.post_generation
+    def trades(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        if extracted:
+            for trade in extracted:
+                self.trades.add(trade)
 
 
 class PersonFactory(factory.django.DjangoModelFactory):
@@ -144,20 +167,21 @@ for p in people:
 
 
 companies = (
-        'Industrial Lubricants',
-        'Linstorm Incorporated',
-        'Lumen Travelers',
-        'Wulan Import Company',
-        'Kayulu Consortium',
-        'Tukus Securities',
-        'Lartmech Interstellar',
-        'Cheevor Partners',
-        'Zephor Industries',
+        ('Industrial Lubricants', []),
+        ('Linstorm Incorporated', ['slave trader']),
+        ('Lumen Travelers', ['exotic goods']),
+        ('Wulan Import Company', ['bulk goods']),
+        ('Kayulu Consortium', ['combat supplier', 'slave trader']),
+        ('Tukus Securities', ['combat supplier']),
+        ('Lartmech Interstellar', ['exotic goods']),
+        ('Cheevor Partners', ['bulk goods']),
+        ('Zephor Industries', ['combat suppler', 'bulk goods']),
         )
 
 
 for c in companies:
-    CompanyFactory(name=c)
+    trades = Trade.objects.filter(name__in=c[1])
+    CompanyFactory(name=c[0], trades=trades)
 
 
 rtypes = (
@@ -238,16 +262,18 @@ for r in relationships:
         continue
     comp = Company.objects.get(name=r[0])
     rtype = RelationshipType.objects.get(name=r[1])
+
     if rtype.category == 'C':
         persons = Person.objects.filter(firstname__endswith=last_letter)
     else:
         persons = Person.objects.filter(lastname__endswith=last_letter)
     for pers in persons:
         r = RelationshipFactory(company=comp, relatype=rtype, person=pers)
-        print(r)
 
 
-print('Persons: %s' % Person.objects.all().count())
 print('Companies: %s' % Company.objects.all().count())
+print('Persons: %s' % Person.objects.all().count())
 print('Relationship types: %s' % RelationshipType.objects.all().count())
 print('Relationships: %s' % Relationship.objects.all().count())
+print('Trades: %s' % Trade.objects.all().count())
+
