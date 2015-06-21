@@ -2,6 +2,7 @@
 from django.views.generic import ListView, DetailView, TemplateView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
+from django.core.exceptions import PermissionDenied
 from django.http import HttpResponseRedirect
 
 from django.contrib.auth.decorators import login_required, permission_required
@@ -43,33 +44,6 @@ class PersonDetail(DetailView):
     def dispatch(self, *args, **kwargs):
         return super(PersonDetail, self).dispatch(*args, **kwargs)
 
-
-class CreateCompany(CreateView):
-    template_name = 'anothercrm/create_form.html'
-    model = Company
-    fields = ('name', 'mission')
-
-    @method_decorator(login_required)
-    @method_decorator(permission_required('anothercrm.add_company'))
-    def dispatch(self, *args, **kwargs):
-        return super(CreateCompany, self).dispatch(*args, **kwargs)
-
-
-class CreatePerson(CreateView):
-    template_name = 'anothercrm/create_form.html'
-    model = Person 
-    fields = (
-              'firstname',
-              'lastname',
-              'sex',
-              'email',
-              'mobile',
-              'address',
-              'zipcode',
-              'city',
-              'state',
-              'country'
-             )
 
     @method_decorator(login_required)
     @method_decorator(permission_required('anothercrm.add_employee'))
@@ -119,13 +93,14 @@ class UpdatePerson(UpdateView):
     template_name = 'anothercrm/update_form.html'
 
     @method_decorator(login_required)
-    @method_decorator(permission_required('anothercrm.change_employee'))
+    @method_decorator(permission_required('anothercrm.change_person'))
     def dispatch(self, *args, **kwargs):
         return super(UpdatePerson, self).dispatch(*args, **kwargs)
 
 
 @login_required
-@permission_required('anothercrm.change_employee')
+@permission_required('anothercrm.change_person')
+#TODO: permission_required forbids access to users who just want to display company data
 def company_detail(request, name, pk):
     company = get_object_or_404(Company, pk=pk)
     if request.method == 'POST':
@@ -141,4 +116,29 @@ def company_detail(request, name, pk):
     return render(request, 'anothercrm/company_detail.html', {'form': form,
                                                               'company': company,
                                                              })
+def delete_object(request, model, pk):
+    modelname = model.__name__.lower()
+    if not request.user.has_perm('anothercrm.delete_%s' % modelname):
+        return HttpResponseRedirect('{0}?next={1}'.format(reverse('login'), request.path))
+    instance = get_object_or_404(model, pk=pk)
+    if request.method == 'POST':
+        instance.delete()
+        return HttpResponseRedirect(reverse('anothercrm:%s_list' % modelname))
+    else:
+        return render(request, 'anothercrm/delete_form.html', {'object': instance})
+
+
+def create_object(request, form):
+    modelname = form.Meta.model.__name__.lower()
+    if not request.user.has_perm('anothercrm.add_%s' % modelname):
+        return HttpResponseRedirect('{0}?next={1}'.format(reverse('login'), request.path))
+    if request.method == 'POST':
+        form = form(request.POST)
+        if form.is_valid():
+            new_object = form.save()
+            return HttpResponseRedirect(new_object.get_absolute_url())
+    else:
+        form = form()
+
+    return render(request, 'anothercrm/create_form.html', {'form': form})
 

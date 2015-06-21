@@ -84,7 +84,7 @@ class Person(models.Model):
 
 
 class Trade(models.Model):
-    name = models.CharField(max_length=100,
+    name = models.CharField(max_length=100, unique=True,
                                    help_text="the industry the company is in.")
 
     def __unicode__(self):
@@ -136,7 +136,7 @@ class RelationshipType(models.Model):
             ('C', 'Client'),
             )
     category = models.CharField(max_length=1, choices=CATEGORY_CHOICES)
-    name = models.CharField(max_length=50,
+    name = models.CharField(max_length=50, unique=True,
             help_text=("For employees, this is position. For customers, it can"
                        " be 'regular customer', etc."))
     notes = models.TextField(blank=True)

@@ -1,6 +1,9 @@
 from django.conf.urls import url
 
+from django.core.urlresolvers import reverse_lazy
 from . import views
+from .models import Company, Trade
+from .forms import AddTradeForm, AddCompanyForm, AddPersonForm
 
 
 urlpatterns = (
@@ -20,13 +23,17 @@ urlpatterns = (
         views.PersonDetail.as_view(), name='person'),
 
         url(r'^create/company$',
-        views.CreateCompany.as_view(), name='create_company'),
+            views.create_object, {'form': AddCompanyForm}, name='create_company'),
 
         url(r'^create/person$',
-        views.CreatePerson.as_view(), name='create_person'),
+            views.create_object, {'form': AddPersonForm}, name='create_person'),
+
+        url(r'^create/trade$',
+            views.create_object, {'form': AddTradeForm}, name='create_trade'),
 
         url(r'^delete/company/(?P<pk>\d+)$',
-        views.DeleteCompany.as_view(), name='delete_company'),
+            views.delete_object, {'model': Company}, name='delete_company'),
+
 
         url(r'^delete/person/(?P<pk>\d+)$',
         views.DeletePerson.as_view(), name='delete_person'),
